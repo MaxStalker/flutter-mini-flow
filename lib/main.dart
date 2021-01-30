@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:convert/convert.dart';
 
@@ -7,11 +8,15 @@ import 'package:flutter/material.dart';
 
 import 'package:mini_flow/generated/flow/access/access.pb.dart';
 import 'package:mini_flow/generated/flow/access/access.pbgrpc.dart';
+import 'package:mini_flow/generated/flow/entities/transaction.pb.dart';
 import 'package:mini_flow/generated/flow/execution/execution.pbgrpc.dart';
 
 import 'package:grpc/grpc.dart';
 import 'package:grpc/service_api.dart' as GRPC;
 import 'package:grpc/grpc_connection_interface.dart';
+import 'package:fixnum/fixnum.dart';
+
+import 'package:mini_flow/sugar/sugar.dart';
 
 void main() {
   runApp(MyApp());
@@ -63,47 +68,75 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  Int64 balance;
+  SugarFlow flow;
 
-  String res;
-  ClientChannelBase channel;
-
-/*  Future<void> _getBlockHeight() async {
-    var hello = await HelloService.SayHello();
-    setState(() {
-      res = hello.response;
-    });
-  }*/
-
-  Future<void> _ping() async {
+  Future<void> _getBalance() async {
     log('got channel');
-    final stub = AccessAPIClient(channel, options: CallOptions(timeout: Duration(seconds: 2)));
-    log('got stub');
-    // final response = await stub.getLatestBlock(GetLatestBlockRequest());
-    // final address = Uint8List.fromList("f8d6e0586b0a20c7".codeUnits);
-    // final decoded =
-    // final address = utf8.encode(0xf8d6e0586b0a20c7.toString()); //utf8.encode(hex.encode("0xf8d6e0586b0a20c7".codeUnits));
-
+    final client =  flow.getAccessClient(); //AccessAPIClient(channel, options: CallOptions(timeout: Duration(seconds: 2)));
     final address = hex.decode("f8d6e0586b0a20c7");
-    log(address.toString());
     final request = GetAccountAtLatestBlockRequest()..address = address;
-    final response = await stub.getAccountAtLatestBlock(request);
-    // log(response.toString());
-    //log(utf8.decode());
+    final response = await client.getAccountAtLatestBlock(request);
+
+    log('got response');
+    log(response.account.toString());
     log(hex.encode(response.account.address));
+
+    final accountBalance = response.account.balance;
+
+    setState(() {
+      balance = accountBalance;
+    });
+
+    log("New state is set");
+  }
+
+  Future<void> _executeScript() async {
+    final client =  flow.getAccessClient();
+    final scriptCode = "pub fun main():Int { return 42 }";
+    final req = ExecuteScriptAtLatestBlockRequest()
+      ..script = utf8.encode(scriptCode);
+    final response = await client.executeScriptAtLatestBlock(req);
+    print(response);
+    final decoded = utf8.decode(response.value);
+    final Map<String, dynamic> scriptResult = jsonDecode(decoded);
+    print("Result type: ${scriptResult['type']}");
+    print("Result value: ${scriptResult['value']}");
+  }
+
+  Future<void> _sendTransaction() async {
+    final client = flow.getAccessClient();
+    final transactionCode = '''
+      transaction { 
+        prepare() {
+          log("hello from Dart 2")
+        }
+      }
+    ''';
+
+    final serviceAccount = hex.decode("f8d6e0586b0a20c7");
+
+    final proposalKey = Transaction_ProposalKey()
+      ..address = serviceAccount
+      ..keyId = 1
+      ..sequenceNumber = Int64(2);
+
+    final transaction = Transaction()
+      ..script = utf8.encode(transactionCode)
+      ..proposalKey = proposalKey
+      ..payer = serviceAccount;
+
+    final req = SendTransactionRequest()
+      ..transaction = transaction;
+
+    final response = await client.sendTransaction(req);
+    print(response);
   }
 
   @override
   void initState() {
-    log("init");
-    res = "Hello, Flow";
-
-    channel = ClientChannel(
-      '10.0.2.2',
-      port: 3569,
-      options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
-    );
-
+    flow = SugarFlow('10.0.2.2', 3569);
+    balance = Int64(0);
     super.initState();
   }
 
@@ -122,21 +155,20 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              res
+              "Account Balance"
             ),
             Text(
-              '$_counter',
+              balance.toString(),
               style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _ping,
+        onPressed: _sendTransaction,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
