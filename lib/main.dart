@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:ffi';
-import 'dart:typed_data';
 import 'package:convert/convert.dart';
 
 import 'package:flutter/material.dart';
@@ -9,14 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:mini_flow/generated/flow/access/access.pb.dart';
 import 'package:mini_flow/generated/flow/access/access.pbgrpc.dart';
 import 'package:mini_flow/generated/flow/entities/transaction.pb.dart';
-import 'package:mini_flow/generated/flow/execution/execution.pbgrpc.dart';
 
-import 'package:grpc/grpc.dart';
-import 'package:grpc/service_api.dart' as GRPC;
-import 'package:grpc/grpc_connection_interface.dart';
 import 'package:fixnum/fixnum.dart';
 
-import 'package:mini_flow/sugar/sugar.dart';
+import 'package:mini_flow/aqueduct/aqueduct.dart';
 
 void main() {
   runApp(MyApp());
@@ -69,7 +64,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Int64 balance;
-  SugarFlow flow;
+  Aqueduct flow;
 
   Future<void> _getBalance() async {
     log('got channel');
@@ -93,7 +88,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _executeScript() async {
     final client =  flow.getAccessClient();
-    final scriptCode = "pub fun main():Int { return 42 }";
+    final scriptCode = '''
+        pub fun main():Int { 
+          log("Hello from Flutter")
+          return 42 
+        }
+      ''';
     final req = ExecuteScriptAtLatestBlockRequest()
       ..script = utf8.encode(scriptCode);
     final response = await client.executeScriptAtLatestBlock(req);
@@ -135,8 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    flow = SugarFlow('10.0.2.2', 3569);
-    balance = Int64(0);
+    flow = Aqueduct('10.0.2.2', 3569);
+    balance = Int64(150);
     super.initState();
   }
 
@@ -168,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _sendTransaction,
+        onPressed: _executeScript,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
