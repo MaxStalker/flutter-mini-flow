@@ -1,11 +1,13 @@
 Following document will track implemented and missing methods and functionality, which need to be supported by SDK:
 
 ## Implemented
+[x] getAccount
+[x] getAccountBalance
 
 ## Partially Implemented
-
-## In Progress
     - getLatestBlock
+    
+## In Progress
 
 ## Missing
 // methods
@@ -18,11 +20,10 @@ Following document will track implemented and missing methods and functionality,
 [] ping
 [] atBlockHeight
 [] atBlockId
-[] getAccount
+
 [] getEvents
 [] getEventsAtBlockHeightRange
 [] getEventsAtBlockIds
-[] getLatestBlock
 [] getBlock
 [] getBlockHeader
 [] getBlockById
