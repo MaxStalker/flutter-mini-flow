@@ -1,0 +1,8 @@
+const LOCALHOST = "localhost";
+const MOBILE_ENDPOINT = "10.0.2.2";
+
+const EMULATOR_PORT = 3569;
+const SERVICE_ACCOUNT = "f8d6e0586b0a20c7";
+
+const UFIX64_DECIMAL_PLACES = 10;
+const FIX_64_FACTOR = 100000000;
