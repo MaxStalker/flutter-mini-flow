@@ -1,17 +1,56 @@
 import 'dart:ffi';
+import 'package:fixnum/fixnum.dart';
+import 'dart:convert';
 
-class TypeInt {
+
+// TODO: Reformat to CadenceValue similar to Go
+
+/// Representation of Cadence Int
+class CadenceInt {
   final String type;
-  final Int64 value;
+  final num value;
 
-  TypeInt(this.type, this.value);
+  CadenceInt(this.value, {this.type = "Int"});
 
-  TypeInt.fromJson(Map<String, dynamic> json)
+  CadenceInt.fromJson(Map<String, dynamic> json)
       : type = json['type'],
         value = json['value'];
 
   Map<String, dynamic> toJson() => {
-    'tyoe': type,
+    'type': type,
     'value': value,
   };
+
+  String toJsonString() {
+    return json.encode(this.toJson());
+  }
+
+  List<int> toMessage(){
+    return utf8.encode(this.toJsonString());
+  }
+}
+
+/// Representation of Cadence String
+class CadenceString {
+  final String type;
+  final String value;
+
+  CadenceString(this.value, {this.type = "String"});
+
+  CadenceString.fromJson(Map<String, dynamic> json)
+      : type = json['type'],
+        value = json['value'];
+
+  Map<String, dynamic> toJson() => {
+    'type': type,
+    'value': value,
+  };
+
+  String toJsonString() {
+    return json.encode(this.toJson());
+  }
+
+  List<int> toMessage(){
+    return utf8.encode(this.toJsonString());
+  }
 }
