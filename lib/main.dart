@@ -11,7 +11,7 @@ import 'package:mini_flow/generated/flow/entities/transaction.pb.dart';
 
 import 'package:fixnum/fixnum.dart';
 
-import 'package:mini_flow/aqueduct/aqueduct.dart';
+import 'package:mini_flow/aqueduct/fcl.dart';
 
 void main() {
   runApp(MyApp());

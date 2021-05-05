@@ -1,13 +1,13 @@
-import 'package:mini_flow/aqueduct/aqueduct.dart';
+import 'package:mini_flow/fcl/fcl.dart';
 
 void main() async {
   final endpoint = "localhost";
-  final port = Aqueduct.FLOW_EMULATOR_PORT;
-  final Aqueduct flow = Aqueduct( endpoint, port);
+  final port = FlowClient.FLOW_EMULATOR_PORT;
+  final FlowClient flow = FlowClient( endpoint, port);
 
   final code = '''
     pub fun main(): Int {
-      log("Hello from Aqueduct");
+      log("Hello from FlowClient");
       return 42
     }
   ''';

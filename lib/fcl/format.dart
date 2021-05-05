@@ -17,7 +17,7 @@ func FormatUFix64(flow uint64) string {
 
 import 'dart:ffi';
 import 'package:fixnum/fixnum.dart';
-import 'package:mini_flow/aqueduct/constants.dart';
+import 'package:mini_flow/fcl/constants.dart';
 
 String _fixedPointToString(Int64 amount, num decimalPlaces) {
   final amountString = amount.toRadixStringUnsigned(UFIX64_DECIMAL_PLACES);

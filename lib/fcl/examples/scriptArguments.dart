@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'package:fixnum/fixnum.dart';
 
-import 'package:mini_flow/aqueduct/aqueduct.dart';
-import 'package:mini_flow/aqueduct/constants.dart';
-import 'package:mini_flow/aqueduct/types.dart';
+import 'package:mini_flow/fcl/fcl.dart';
+import 'package:mini_flow/fcl/constants.dart';
+import 'package:mini_flow/fcl/types.dart';
 import 'package:mini_flow/generated/flow/access/access.pb.dart';
 
 void main() async {
-  final flowWay = Aqueduct(LOCALHOST, EMULATOR_PORT);
+  final flow = FlowClient(LOCALHOST, EMULATOR_PORT);
 
   final code = '''
     pub fun main(message: String): String {
@@ -20,7 +20,7 @@ void main() async {
   ''';
 
   final rawArguments = [
-    CadenceString("Hello from Aqueduct").toMessage()
+    CadenceString("Hello from FlowClient").toMessage()
   ];
 
   final scriptRequest = ExecuteScriptAtBlockHeightRequest()
@@ -29,7 +29,7 @@ void main() async {
 
   scriptRequest.arguments.insertAll(0, rawArguments);
 
-  final response = await flowWay.getAccessClient().executeScriptAtBlockHeight(scriptRequest);
+  final response = await flow.getAccessClient().executeScriptAtBlockHeight(scriptRequest);
   print(response);
 
   final decoded = utf8.decode(response.value);

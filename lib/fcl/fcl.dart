@@ -8,7 +8,7 @@ import 'package:fixnum/fixnum.dart';
 
 import 'package:grpc/grpc.dart';
 import 'package:grpc/grpc_connection_interface.dart';
-import 'package:mini_flow/aqueduct/format.dart';
+import 'package:mini_flow/fcl/format.dart';
 
 // Flow protobuf
 import 'package:mini_flow/generated/flow/access/access.pb.dart';
@@ -16,7 +16,7 @@ import 'package:mini_flow/generated/flow/access/access.pbgrpc.dart';
 import 'package:mini_flow/generated/flow/execution/execution.pb.dart';
 import 'package:mini_flow/generated/flow/execution/execution.pbgrpc.dart';
 
-class Aqueduct {
+class FlowClient {
   String endPoint;
   int port;
   ClientChannelBase channel;
@@ -27,7 +27,7 @@ class Aqueduct {
   static const String MOBILE_EMULATOR_ENDPOINT = '10.0.2.2';
   static const int FLOW_EMULATOR_PORT = 3569;
 
-  Aqueduct(this.endPoint, this.port) {
+  FlowClient(this.endPoint, this.port) {
     this
       ..channel = ClientChannel(
         this.endPoint,

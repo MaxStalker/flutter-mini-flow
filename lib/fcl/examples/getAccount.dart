@@ -1,9 +1,9 @@
-import 'package:mini_flow/aqueduct/aqueduct.dart';
-import 'package:mini_flow/aqueduct/constants.dart';
-import 'package:mini_flow/aqueduct/format.dart';
+import 'package:mini_flow/fcl/fcl.dart';
+import 'package:mini_flow/fcl/constants.dart';
+import 'package:mini_flow/fcl/format.dart';
 
 void main() async {
-  final Aqueduct flow = Aqueduct(LOCALHOST, EMULATOR_PORT);
+  final FlowClient flow = FlowClient(LOCALHOST, EMULATOR_PORT);
   final account = (await flow.getAccount(SERVICE_ACCOUNT)).account;
 
   final formatted = formatUFix64(account.balance);
