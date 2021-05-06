@@ -11,31 +11,19 @@ void main() async {
   final flow = FlowClient(LOCALHOST, EMULATOR_PORT);
 
   final code = '''
-    pub fun main(message: String): String {
-      log("this is working")
+    pub fun main(message: String): Int {
       log(message)
-      
-      return "I believe I can fly"
+      return 42
     }
   ''';
 
-  final rawArguments = [
-    CadenceString("Hello from FlowClient").toMessage()
+  final args = [
+    CadenceValue(value: "Hello from Dart Flow Client", type: CadenceType.String)
   ];
 
-  final scriptRequest = ExecuteScriptAtBlockHeightRequest()
-    ..blockHeight = Int64(0)
-    ..script = utf8.encode(code);
-
-  scriptRequest.arguments.insertAll(0, rawArguments);
-
-  final response = await flow.getAccessClient().executeScriptAtBlockHeight(scriptRequest);
-  print(response);
-
-  final decoded = utf8.decode(response.value);
-  final Map<String, dynamic> scriptResult = jsonDecode(decoded);
-  print("Result type: ${scriptResult['type']}");
-  print("Result value: ${scriptResult['value']}");
+  final response = await flow.executeScript(code, args);
+  final Map<String, dynamic> decodedResult = flow.decodeResponse(response);
+  final cadenceValue = CadenceValue.fromJson(decodedResult);
 
   print("✅ Done");
 }
