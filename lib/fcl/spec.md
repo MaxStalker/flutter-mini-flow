@@ -1,5 +1,10 @@
 Following document will track implemented and missing methods and functionality, which need to be supported by SDK:
 
+Basic approach - SDK is Discoverable, FCL - Invented.
+All available methods inside SDK and FCL is focusing on
+"current user" concept.
+
+
 ## Implemented
 [x] getAccount
 [x] getAccountBalance
