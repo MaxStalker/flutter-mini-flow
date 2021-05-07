@@ -4,14 +4,9 @@ import 'dart:ffi';
 import 'package:convert/convert.dart';
 
 import 'package:flutter/material.dart';
-
-import 'package:mini_flow/generated/flow/access/access.pb.dart';
-import 'package:mini_flow/generated/flow/access/access.pbgrpc.dart';
-import 'package:mini_flow/generated/flow/entities/transaction.pb.dart';
-
+import 'package:mini_flow/fcl/fcl.dart';
 import 'package:fixnum/fixnum.dart';
 
-import 'package:mini_flow/aqueduct/fcl.dart';
 
 void main() {
   runApp(MyApp());
@@ -64,7 +59,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Int64 balance;
-  Aqueduct flow;
+  FlowClient flow;
 
   Future<void> _getBalance() async {
     log('got channel');
@@ -135,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    flow = Aqueduct('10.0.2.2', 3569);
+    flow = FlowClient('10.0.2.2', 3569);
     balance = Int64(150);
     super.initState();
   }
