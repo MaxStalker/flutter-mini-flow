@@ -13,8 +13,9 @@ void main() async {
   ''';
 
   final result = await flow.executeScript(code);
+  final decoded = flow.decodeResponse(result);
+
   print(result);
-  final decoded = await flow.decodeResponse(result);
   print(decoded);
 
   print("✅ Done");

@@ -7,9 +7,9 @@ void main() async {
   final account = (await flow.getAccount(SERVICE_ACCOUNT)).account;
 
   final formatted = formatUFix64(account.balance);
-  print("From Account: $formatted");
-
   final accountBalance = await flow.getAccountBalance(SERVICE_ACCOUNT);
+
+  print("From Account: $formatted");
   print("Direct: $accountBalance");
 
   print("✅ Done");
